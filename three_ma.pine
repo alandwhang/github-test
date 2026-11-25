@@ -2,16 +2,27 @@
 // 均線畫在主圖，成交量畫在下方獨立窗格
 indicator("三條均線 + 成交量", overlay = false)
 
+// ===== 均線計算函式 =====
+// 三種都先算好再挑選，避免 ta 函式放在條件式裡造成計算不一致
+maCalc(src, len, maType) =>
+    sma = ta.sma(src, len)
+    ema = ta.ema(src, len)
+    wma = ta.wma(src, len)
+    maType == "EMA" ? ema : maType == "WMA" ? wma : sma
+
 // ===== 均線 1 =====
 show1 = input.bool(true, "顯示 MA1", group = "MA1")
+type1 = input.string("SMA", "MA1 類型", options = ["SMA", "EMA", "WMA"], group = "MA1")
 len1  = input.int(5, "MA1 週期", minval = 1, group = "MA1")
 
 // ===== 均線 2 =====
 show2 = input.bool(true, "顯示 MA2", group = "MA2")
+type2 = input.string("SMA", "MA2 類型", options = ["SMA", "EMA", "WMA"], group = "MA2")
 len2  = input.int(20, "MA2 週期", minval = 1, group = "MA2")
 
 // ===== 均線 3 =====
 show3 = input.bool(true, "顯示 MA3", group = "MA3")
+type3 = input.string("SMA", "MA3 類型", options = ["SMA", "EMA", "WMA"], group = "MA3")
 len3  = input.int(60, "MA3 週期", minval = 1, group = "MA3")
 
 // ===== 成交量 =====
@@ -20,9 +31,9 @@ showVolMa = input.bool(true, "顯示成交量均線", group = "成交量")
 volMaLen  = input.int(20, "成交量均線週期", minval = 1, group = "成交量")
 
 // ===== 計算 =====
-ma1   = ta.sma(close, len1)
-ma2   = ta.sma(close, len2)
-ma3   = ta.sma(close, len3)
+ma1   = maCalc(close, len1, type1)
+ma2   = maCalc(close, len2, type2)
+ma3   = maCalc(close, len3, type3)
 volMa = ta.sma(volume, volMaLen)
 
 // ===== 均線繪圖（force_overlay = true 讓它畫在主圖 K 線上）=====
