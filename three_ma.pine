@@ -30,7 +30,7 @@ plot(show1 ? ma1 : na, "MA1", color = color.yellow,  linewidth = 2, force_overla
 plot(show2 ? ma2 : na, "MA2", color = color.aqua,    linewidth = 2, force_overlay = true)
 plot(show3 ? ma3 : na, "MA3", color = color.fuchsia, linewidth = 2, force_overlay = true)
 
-// ===== 成交量繪圖（收紅綠漲、收黑紅跌）=====
+// ===== 成交量繪圖（上漲綠、下跌紅）=====
 volColor = close >= open ? color.new(color.teal, 40) : color.new(color.red, 40)
 plot(showVol ? volume : na, "成交量", color = volColor, style = plot.style_columns)
 plot(showVolMa ? volMa : na, "成交量均線", color = color.orange, linewidth = 2)
