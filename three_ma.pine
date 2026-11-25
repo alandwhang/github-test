@@ -1,5 +1,6 @@
 //@version=6
-indicator("三條均線 (3 MA)", overlay = true)
+// 均線畫在主圖，成交量畫在下方獨立窗格
+indicator("三條均線 + 成交量", overlay = false)
 
 // ===== 均線 1 =====
 show1 = input.bool(true, "顯示 MA1", group = "MA1")
@@ -13,12 +14,23 @@ len2  = input.int(20, "MA2 週期", minval = 1, group = "MA2")
 show3 = input.bool(true, "顯示 MA3", group = "MA3")
 len3  = input.int(60, "MA3 週期", minval = 1, group = "MA3")
 
-// ===== 計算 =====
-ma1 = ta.sma(close, len1)
-ma2 = ta.sma(close, len2)
-ma3 = ta.sma(close, len3)
+// ===== 成交量 =====
+showVol   = input.bool(true, "顯示成交量", group = "成交量")
+showVolMa = input.bool(true, "顯示成交量均線", group = "成交量")
+volMaLen  = input.int(20, "成交量均線週期", minval = 1, group = "成交量")
 
-// ===== 繪圖（關閉時回傳 na 即不顯示）=====
-plot(show1 ? ma1 : na, "MA1", color = color.yellow, linewidth = 2)
-plot(show2 ? ma2 : na, "MA2", color = color.aqua,   linewidth = 2)
-plot(show3 ? ma3 : na, "MA3", color = color.fuchsia, linewidth = 2)
+// ===== 計算 =====
+ma1   = ta.sma(close, len1)
+ma2   = ta.sma(close, len2)
+ma3   = ta.sma(close, len3)
+volMa = ta.sma(volume, volMaLen)
+
+// ===== 均線繪圖（force_overlay = true 讓它畫在主圖 K 線上）=====
+plot(show1 ? ma1 : na, "MA1", color = color.yellow,  linewidth = 2, force_overlay = true)
+plot(show2 ? ma2 : na, "MA2", color = color.aqua,    linewidth = 2, force_overlay = true)
+plot(show3 ? ma3 : na, "MA3", color = color.fuchsia, linewidth = 2, force_overlay = true)
+
+// ===== 成交量繪圖（收紅綠漲、收黑紅跌）=====
+volColor = close >= open ? color.new(color.teal, 40) : color.new(color.red, 40)
+plot(showVol ? volume : na, "成交量", color = volColor, style = plot.style_columns)
+plot(showVolMa ? volMa : na, "成交量均線", color = color.orange, linewidth = 2)
